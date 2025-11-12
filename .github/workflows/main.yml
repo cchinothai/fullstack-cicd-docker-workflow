@@ -31,10 +31,10 @@ jobs:
           node-version: 24
       
       # 3. Install dependencies
+      # ** ensure lint and related scripts are setup locally
       - name: Install dependencies
         run: | 
           npm install
-          npm install eslint --save-dev
 
       # 4. Lint and test the application
       - name: Lint and Test
