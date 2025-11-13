@@ -7,8 +7,7 @@ export default defineConfig([
   { 
     files: ["**/*.{js,mjs,cjs,jsx}"], 
     plugins: [
-      "react", 
-      "js"
+      "react"
     ], 
     extends: [
       "js/recommended", 
