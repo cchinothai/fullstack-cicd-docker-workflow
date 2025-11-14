@@ -122,9 +122,13 @@ VITE_API_URL - Backend API URL (configurable per environment)
 🔐 Security Considerations
 
 ✅ Non-root user in Docker containers
+
 ✅ CORS configured for specific origins
+
 ✅ Dependencies scanned during npm ci
+
 ✅ Minimal base images (Alpine Linux)
+
 ✅ Secrets managed via GitHub Secrets (not committed)
 
 
