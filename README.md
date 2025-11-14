@@ -60,8 +60,8 @@ Docker images built
          ↓
 Pushed to Docker Hub
          ↓
-Ready for deployment
-    (Elastic Beanstalk)
+Ready for deployment - (IP)
+    (Elastic Beanstalk / Lightrail / Render)
 ```
 
 
@@ -157,10 +157,13 @@ $ docker run -d -p 3000:80 --name frontend-container cchinothai/deploy-web-app-f
 
 ```
 # Pull latest images from Docker Hub
-docker-compose pull
+$ docker-compose pull
+
+#Check current running containers
+$ docker ps
 
 # Start all services
-docker-compose up
+$ docker-compose up
 
 # Access application
 # Frontend: http://localhost:3000
