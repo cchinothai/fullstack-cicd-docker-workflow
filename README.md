@@ -162,6 +162,8 @@ docker-compose up
 # Frontend: http://localhost:3000
 # Backend: http://localhost:4000
 ```
+<img width="1918" height="1610" alt="docker desktop container" src="https://github.com/user-attachments/assets/1bb9250c-34c1-4d6b-8895-aca5f532ecd7" />
+
 
 
 
