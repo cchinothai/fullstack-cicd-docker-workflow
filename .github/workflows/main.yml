@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Node.js CI/CD pipeline
+name: Full-Stack CI/CD pipeline
 
 # Controls when the workflow will run
 on:
@@ -15,12 +15,14 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
+  # ============================================
+  # Job 1: Test Backend
+  # ============================================
+  test-backend:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout repository code so that our workflow can access it 
+      # 1. Checkout repository 
       - name: Checkout code 
         uses: actions/checkout@v5
 
@@ -32,21 +34,67 @@ jobs:
       
       # 3. Install dependencies
       # ** ensure lint and related scripts are setup locally
-      - name: Install dependencies
-        run: | 
-          npm install
+      - name: Install Backend Dependencies
+        working-directory: ./backend
+        run: npm ci 
 
-      # 4. Lint and test the application
-      - name: Lint and Test
-        run: |
-          npm run lint
-          npm test
-      
-      # 5. Build Docker image from your Dockerfile with the tagged name
-      - name: Build Docker Image
-        run: |
-          docker build -t "deploy-node-app-tcw" .
-          docker tag deploy-node-app-tcw ${{ secrets.DOCKER_HUB_USERNAME }}/deploy-node-app-tcw:latest
+      - name: Lint Backend
+        working-directory: ./backend
+        run: npm run lint
+
+      - name: Test Backend
+        working-directory: ./backend
+        run: npm test
+
+  # ============================================
+  # Job 2: Test Frontend
+  # ============================================
+  test-frontend:
+    runs-on: ubuntu-latest
+
+    steps: 
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js 24
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+
+      - name: Install frontend dependencies
+        working-directory: ./frontend
+        run: npm ci 
+
+      - name: Lint frontend
+        working-directory: ./frontend
+        run: npm run lint
+
+      - name: Test frontend
+        working-directory: ./frontend
+        run: npm test -- --run
+
+      - name: Build frontend
+        working-directory: ./frontend
+        run: npm run build
+  # ============================================
+  # Job 3: Build and Push Docker Images
+  # ============================================
+  docker-build-and-push:
+    needs: [test-backend, test-frontend]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        
+      # ============================================
+      # Build docker images from your Dockerfiles with the tagged name
+      # ============================================
+      - name: Build backend Docker Image and Tag
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/deploy-web-app-backend:latest ./backend
+
+      - name: Build frontend Docker Image
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/deploy-web-app-backend:latest ./frontend
 
       # 6. Optional: Login to Docker Hub and push Docker image
       # ** Uncomment if you want to push the Docker image to Docker Hub
@@ -57,6 +105,16 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
-      - name: Push Docker image
-        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/deploy-node-app-tcw:latest
+      # ============================================
+      # Push docker images
+      # - Docker will check existing images and upload NEW or CHANGED layers
+      # - Then, it will update the manifests to make the image available on Docker Hub
+      # ============================================
+
+      - name: Push backend image
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/deploy-web-app-backend:latest
+        
+      - name: Push frontend image
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/deploy-web-app-backend:latest
+        
         
