@@ -2,6 +2,8 @@
 
 Built with modern DevOps practices for automated, reliable deployments 🚀
 
+# Table of Contents ... 
+
 🏗️ Architecture
 Microservices Architecture:
 
@@ -41,7 +43,7 @@ project board: https://www.notion.so/Deploy-Node-App-w-Docker-AWS-2aa62cf00b7680
 
 <img width="1257" height="857" alt="image" src="https://github.com/user-attachments/assets/62b05af6-df3e-49b0-8f2f-4bc3f5dc932e" />
 
-🔄 Deployment Workflow
+### 🔄 Deployment Workflow
 ```
 Developer pushes code to GitHub
          ↓
@@ -65,7 +67,7 @@ Ready for deployment - (IP)
 ```
 
 
-⚙️ CI/CD Pipeline Automation
+### ⚙️ CI/CD Pipeline Automation
 Automated Workflow Triggers
 
 On Push to main: Full pipeline execution
@@ -98,7 +100,7 @@ Job: docker-build-and-push
 <img width="1349" height="813" alt="image" src="https://github.com/user-attachments/assets/d03ca18d-20e2-42a9-b1a6-d3031433f0da" />
 
 
-# Key Automation Features
+### Key Automation Features
 ✅ Fail-Fast Testing: Backend and frontend tests run in parallel; Docker builds only if ALL tests pass
 
 ✅ Automated Image Builds: Every push to main triggers new Docker image builds
@@ -111,7 +113,7 @@ Job: docker-build-and-push
 
 ✅ Dependency Caching: npm ci ensures reproducible builds from lock files
 
-# Docker Specific Features
+### Docker Specific Features
 ```
 RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=bind,source=package-lock.json,target=package-lock.json \
@@ -129,7 +131,7 @@ In my Dockerfiles, I decided to:
     - This creates a persistent cache directory at /root/.npm so it survives across builds (not part of final image)
     - Optimization: we can reuse packages instead of reinstalling everytime we run this file. 
 
-# 📝 Environment Variables
+### 📝 Environment Variables
 
 Backend:
 
@@ -141,7 +143,7 @@ Frontend:
 
 VITE_API_URL - Backend API URL (configurable per environment)
 
-# 🔐 Security Considerations
+### 🔐 Security Considerations
 
 ✅ Non-root user in Docker containers
 
@@ -154,7 +156,7 @@ VITE_API_URL - Backend API URL (configurable per environment)
 ✅ Secrets managed via GitHub Secrets (not committed)
 
 
-# Local Testing
+### Local Testing
 - verify containers are working as intended:
 
 ---------------------------
@@ -189,7 +191,7 @@ $ docker-compose up
 ```
 <img width="1918" height="1610" alt="docker desktop container" src="https://github.com/user-attachments/assets/1bb9250c-34c1-4d6b-8895-aca5f532ecd7" />
 
-🎓 Key Learnings
+### 🎓 Key Learnings
 
 
 1. Infrastructure as Code: Dockerfiles and compose.yaml define entire stack
