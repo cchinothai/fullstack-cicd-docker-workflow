@@ -78,12 +78,12 @@ Pipeline Stages
 Job: test-backend
 ├─ Install dependencies (npm ci)
 ├─ Run ESLint
-└─ Run Jest tests with coverage
+└─ Run Vitest / Jest tests with coverage
 
 Job: test-frontend  
 ├─ Install dependencies (npm ci)
 ├─ Run ESLint
-├─ Run Jest tests with coverage
+├─ Run Vitest / Jest tests with coverage
 └─ Build production bundle
 ```
 2. Docker Build & Push (Only if first tests pass)
@@ -98,7 +98,7 @@ Job: docker-build-and-push
 <img width="1349" height="813" alt="image" src="https://github.com/user-attachments/assets/d03ca18d-20e2-42a9-b1a6-d3031433f0da" />
 
 
-Key Automation Features
+# Key Automation Features
 ✅ Fail-Fast Testing: Backend and frontend tests run in parallel; Docker builds only if ALL tests pass
 
 ✅ Automated Image Builds: Every push to main triggers new Docker image builds
@@ -107,11 +107,29 @@ Key Automation Features
 
 ✅ Code Quality Gates: ESLint must pass before builds proceed
 
-✅ Test Coverage Reports: Jest generates coverage for both services (IP)
+✅ Test Coverage Reports: Vitest generates coverage for both services (IP)
 
 ✅ Dependency Caching: npm ci ensures reproducible builds from lock files
 
-📝 Environment Variables
+# Docker Specific Features
+```
+RUN --mount=type=bind,source=package.json,target=package.json \
+    --mount=type=bind,source=package-lock.json,target=package-lock.json \
+    --mount=type=cache,target=/root/.npm \
+    npm ci --omit=dev
+```
+In my Dockerfiles, I decided to: 
+
+🔒 Incorporate Bind Mounts for Lock Files (--mount=type=bind)
+    - this temporarily mounts package.json and package-lock.json without copying them. 
+    - Docker can detect if these files changed WITHOUT invalidating the cache layer
+    - This layer only rebuilds when the dependencies change.
+
+📦 I also use BuildKit Cache Mounts (--mount=type=cache)
+    - This creates a persistent cache directory at /root/.npm so it survives across builds (not part of final image)
+    - Optimization: we can reuse packages instead of reinstalling everytime we run this file. 
+
+# 📝 Environment Variables
 
 Backend:
 
@@ -123,7 +141,7 @@ Frontend:
 
 VITE_API_URL - Backend API URL (configurable per environment)
 
-🔐 Security Considerations
+# 🔐 Security Considerations
 
 ✅ Non-root user in Docker containers
 
